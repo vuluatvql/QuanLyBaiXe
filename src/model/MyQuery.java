@@ -23,9 +23,8 @@ public class MyQuery {
 		stmt = con.prepareStatement(sql);
 		System.out.println("CreateStatement complete");
 		
-		ResultSet rs = stmt.executeQuery(sql);
+		ResultSet rs = stmt.executeQuery();
 		System.out.println("ResultSet complete");
-		rs = stmt.executeQuery(sql);
 		
 		return rs;
 	}
