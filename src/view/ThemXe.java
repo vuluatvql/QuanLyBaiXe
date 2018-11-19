@@ -24,11 +24,10 @@ import java.awt.FlowLayout;
 
 public class ThemXe extends JFrame{
 	
+	public int vexe = 1;
 	String BienSo;
-	int SoVe;
 	String LoaiXe;
 	String BaiXe;
-	Date GioVao;
 	int NguoiThem;
 	
 	private JTextField txtBienSo;
@@ -67,8 +66,7 @@ public class ThemXe extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				MyQuery themxe = new MyQuery();
-				String sql = "";
-				themxe.ExcuteQueryUpdateDB(sql);
+				load();
 				
 			}
 		});
@@ -176,9 +174,17 @@ public class ThemXe extends JFrame{
 //		System.out.println(date);  
 //		GioVao = date;
 		
-		long millis = System.currentTimeMillis();  
-		java.sql.Timestamp date=new java.sql.Timestamp(millis);
-		System.out.println(date);
+// 		long millis = System.currentTimeMillis();  
+// 		java.sql.Timestamp date=new java.sql.Timestamp(millis);
+// 		System.out.println(date);
 		
+		MyQuery ds = new MyQuery();
+		String sql1 = "INSERT INTO vexe (id, loai) VALUES (" + String.valueOf(vexe) + ", Ngay)";
+		String sql2 = "INSERT INTO baixe (id, tenbai) VALUES (" + BaiXe + ", Bai A)";
+		String sql3 = "INSERT INTO luotgui (id, giovao, loaixe, bienso, vexe_id, baixe_id, user_id) VALUES (" + String.valueOf(vexe) + "NOW(), " + LoaiXe + ", " + BienSo + ", " + String.valueOf(vexe++) + ", " + BaiXe + ", 1)"; 
+		
+		ResultSet rs = ds.ExcuteQueryGetTable(sql1);
+		ResultSet rs = ds.ExcuteQueryGetTable(sql2);
+		ResultSet rs = ds.ExcuteQueryGetTable(sql3);
 	}
 }
