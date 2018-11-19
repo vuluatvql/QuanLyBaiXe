@@ -28,7 +28,6 @@ public class ThemXe extends JFrame{
 	String BienSo;
 	String LoaiXe;
 	String BaiXe;
-	Date GioVao;
 	int NguoiThem;
 	
 	private JTextField txtBienSo;
