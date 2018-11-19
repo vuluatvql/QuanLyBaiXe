@@ -19,18 +19,50 @@ import java.awt.Color;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.SoftBevelBorder;
+import javax.swing.table.DefaultTableModel;
+
+import controller.AcDanhSachXe;
+import model.MyQuery;
+
 import javax.swing.border.LineBorder;
 import javax.swing.border.CompoundBorder;
 import java.awt.Font;
 import javax.swing.UIManager;
 import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+
+import javax.swing.JTable;
 
 public class TrangChu extends JFrame {
+	
+	private JPanel tittle;
+	private JLabel lblDanhSachXe;
+	private JLabel lblUser;
 	private JTextField txtTimKiem;
 	
+	private JPanel menuLeft;
+	private JButton btnDanhSachXe;
+	private JButton btnThemXe;
+	private JButton btnBaiXe;
+	private JButton btnDangNhap;
+	private JButton btnDangXuat;
+	
+	private JPanel content;
+	private JTable tableDanhsach;
+	
+	private JPanel tool;
+	private JButton btnXuatXe;
+	private JButton btnSuaThongTin;
+	private JButton btnBaoMat;
+	
+	private DefaultTableModel table = null;
+	
 	public TrangChu() {
-		getContentPane().setBackground(Color.WHITE);
 		initComponents();
+		load();
+		setVisible(true);
 		
 	}
 	private void initComponents() {
@@ -42,88 +74,185 @@ public class TrangChu extends JFrame {
         setLocation(new java.awt.Point(250, 100));
         setResizable(false);
         
-        JPanel menuLeft = new JPanel();
+        getContentPane().setBackground(Color.WHITE);
+        getContentPane().setLayout(null);
+        
+        menuLeft = new JPanel();
         menuLeft.setBounds(0, 0, 180, 460);
         menuLeft.setBackground(new Color(255, 222, 173));
+        menuLeft.setLayout(null);
+        getContentPane().add(menuLeft);
         
-        JPanel tittle = new JPanel();
+        tittle = new JPanel();
         tittle.setBounds(180, 0, 600, 60);
         tittle.setBackground(new Color(175, 238, 238));
+        tittle.setLayout(null);
+        getContentPane().add(tittle);
         
-        JPanel content = new JPanel();
+        content = new JPanel();
         content.setBounds(180, 60, 600, 360);
+        content.setLayout(null);
+        getContentPane().add(content);
         
-        JPanel tool = new JPanel();
+        tool = new JPanel();
         tool.setBackground(Color.LIGHT_GRAY);
         tool.setBounds(180, 420, 600, 40);
-        getContentPane().setLayout(null);
-        menuLeft.setLayout(null);
+        getContentPane().add(tool);
         
-        JButton btnDanhSachXe = new JButton("Danh Sách Xe");
+        
+        btnDanhSachXe = new JButton("Danh Sách Xe");
         btnDanhSachXe.setForeground(Color.WHITE);
         btnDanhSachXe.setFont(new Font("Tahoma", Font.BOLD, 16));
         btnDanhSachXe.setBackground(new Color(34, 139, 34));
         btnDanhSachXe.setBounds(0, 0, 180, 92);
         menuLeft.add(btnDanhSachXe);
+        btnDanhSachXe.addActionListener(new AcDanhSachXe(TrangChu.this));
         
-        JButton btnThemXe = new JButton("Thêm Xe");
+        btnThemXe = new JButton("Thêm Xe");
         btnThemXe.setForeground(Color.WHITE);
         btnThemXe.setFont(new Font("Tahoma", Font.BOLD, 16));
         btnThemXe.setBackground(new Color(34, 139, 34));
         btnThemXe.setBounds(0, 92, 180, 92);
+        btnThemXe.setEnabled(false);
         menuLeft.add(btnThemXe);
+        btnThemXe.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				ThemXe themxe = new ThemXe();
+			}
+		});
         
-        JButton btnBaiXe = new JButton("Bãi Xe");
+        btnBaiXe = new JButton("Bãi Xe");
         btnBaiXe.setForeground(Color.WHITE);
         btnBaiXe.setFont(new Font("Tahoma", Font.BOLD, 16));
         btnBaiXe.setBackground(new Color(34, 139, 34));
         btnBaiXe.setBounds(0, 184, 180, 92);
+        btnBaiXe.setEnabled(false);
         menuLeft.add(btnBaiXe);
         
-        JButton btnNewButton = new JButton("New button");
-        btnNewButton.setForeground(Color.WHITE);
-        btnNewButton.setFont(new Font("Tahoma", Font.BOLD, 16));
-        btnNewButton.setBackground(new Color(34, 139, 34));
-        btnNewButton.setBounds(0, 276, 180, 92);
-        menuLeft.add(btnNewButton);
+        btnDangNhap = new JButton("Đăng Nhập");
+        btnDangNhap.setForeground(Color.WHITE);
+        btnDangNhap.setFont(new Font("Tahoma", Font.BOLD, 16));
+        btnDangNhap.setBackground(new Color(34, 139, 34));
+        btnDangNhap.setBounds(0, 276, 180, 92);
+        menuLeft.add(btnDangNhap);
+        btnDangNhap.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				DangNhap dn = new DangNhap(TrangChu.this);
+				dn.setVisible(true);
+			}
+		});
         
-        JButton btnDngXuat = new JButton("Đăng Xuất");
-        btnDngXuat.setForeground(Color.WHITE);
-        btnDngXuat.setFont(new Font("Tahoma", Font.BOLD, 16));
-        btnDngXuat.setBackground(new Color(34, 139, 34));
-        btnDngXuat.setBounds(0, 368, 180, 92);
-        menuLeft.add(btnDngXuat);
-        getContentPane().add(menuLeft);
-        getContentPane().add(tittle);
-        tittle.setLayout(null);
+        btnDangXuat = new JButton("Đăng Xuất");
+        btnDangXuat.setForeground(Color.WHITE);
+        btnDangXuat.setFont(new Font("Tahoma", Font.BOLD, 16));
+        btnDangXuat.setBackground(new Color(34, 139, 34));
+        btnDangXuat.setBounds(0, 368, 180, 92);
+        btnDangXuat.setEnabled(false);
+        menuLeft.add(btnDangXuat);
         
-        JLabel lblDanhSchXe = new JLabel("Danh Sách Xe Trong Bãi");
-        lblDanhSchXe.setForeground(Color.BLUE);
-        lblDanhSchXe.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblDanhSchXe.setBackground(Color.CYAN);
-        lblDanhSchXe.setBounds(63, 11, 228, 38);
-        tittle.add(lblDanhSchXe);
+        
+        lblDanhSachXe = new JLabel("Danh Sách Xe Trong Bãi");
+        lblDanhSachXe.setForeground(Color.BLUE);
+        lblDanhSachXe.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblDanhSachXe.setBackground(Color.CYAN);
+        lblDanhSachXe.setBounds(63, 11, 228, 38);
+        tittle.add(lblDanhSachXe);
         
         txtTimKiem = new JTextField();
         txtTimKiem.setText("Tìm kiếm?");
         txtTimKiem.setBounds(332, 17, 257, 26);
-        tittle.add(txtTimKiem);
         txtTimKiem.setColumns(10);
-        getContentPane().add(content);
-        getContentPane().add(tool);
+        tittle.add(txtTimKiem);
         
-        JButton btnXuatXe = new JButton("Xuất Xe");
+        lblUser = new JLabel("Người dùng khách");
+        lblUser.setForeground(Color.RED);
+        lblUser.setFont(new Font("Times New Roman", Font.PLAIN, 9));
+        lblUser.setBounds(63, 42, 191, 14);
+        tittle.add(lblUser);
+        
+        tableDanhsach = new JTable();
+        tableDanhsach.setBounds(5, 5, 590, 350);
+        content.add(tableDanhsach);
+        
+        btnXuatXe = new JButton("Xuất Xe");
+        btnXuatXe.setEnabled(false);
         tool.add(btnXuatXe);
+        btnXuatXe.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				XuatXe xuat = new XuatXe();
+			}
+		});
         
-        JButton btnSuaThongTin = new JButton("Sửa Thông Tin");
+        btnSuaThongTin = new JButton("Sửa Thông Tin");
+        btnSuaThongTin.setEnabled(false);
         tool.add(btnSuaThongTin);
         
-        JButton btnBaoMat = new JButton("Báo Mất");
+        btnBaoMat = new JButton("Báo Mất");
+        btnBaoMat.setEnabled(false);
         tool.add(btnBaoMat);
 	}
+	
+	public void load() {
+		table = new DefaultTableModel();
+		table.addColumn("ID");
+		table.addColumn("Loại Xe");
+		table.addColumn("Biển Số");
+		table.addColumn("Giờ Vào");
+		table.addColumn("Bãi Xe");
+		table.addColumn("Người Nhập");
+		
+		MyQuery ds = new MyQuery();
+		String sql = "SELECT * FROM luotgui";
+		ResultSet rs = ds.ExcuteQueryGetTable(sql);
+		
+		try {
+			while (rs.next()) {
+				
+				int id = rs.getInt("id");
+				String loaixe = rs.getString("loaixe");
+				String bienso = rs.getString("bienso");
+				String giovao = String.valueOf(rs.getDate("giovao"));
+				int baixe = rs.getInt("baixe_id");
+				int nguoinhap = rs.getInt("user_id");
+				
+				// add to table
+				String[] values = new String[6];
+				values[0] = String.valueOf(id);
+				values[1] = loaixe;
+				values[2] = bienso;
+				values[3] = giovao;
+				values[4] = String.valueOf(baixe);
+				values[5] = String.valueOf(nguoinhap);
+				
+				table.addRow(values);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		tableDanhsach.setModel(table);
+		
+	}
+	
+	public void enableControl(String text) {
+		
+		btnThemXe.setEnabled(true);
+		btnBaiXe.setEnabled(true);
+		btnDangXuat.setEnabled(true);
+		btnXuatXe.setEnabled(true);
+		btnSuaThongTin.setEnabled(true);
+		btnBaoMat.setEnabled(true);
+		lblUser.setText("Admin " + text);
+	}
+	
 	public static void main(String[] args) {
 		TrangChu home = new TrangChu();
-		home.setVisible(true);
-		
 	}
 }
