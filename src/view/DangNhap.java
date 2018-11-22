@@ -2,6 +2,7 @@ package view;
 
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -120,11 +121,14 @@ public class DangNhap extends javax.swing.JFrame {
 
         btnDangKy.setForeground(new java.awt.Color(255, 153, 51));
         btnDangKy.setText("Đăng ký");
-        btnDangKy.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnĐangKyActionPerformed(evt);
-            }
-        });
+        btnDangKy.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				JOptionPane.showMessageDialog(DangNhap.this, "Vui lòng liên hệ ban quản trị", "Đăng kí", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 
         btnDangNhap.setForeground(new java.awt.Color(255, 153, 51));
         btnDangNhap.setText("Đăng Nhập");
@@ -229,16 +233,17 @@ public class DangNhap extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
 
+    public int userID;
     public String quyen;
     public String fullname="";
     public String username="";
     
-    private void btnĐangKyActionPerformed(ActionEvent evt) {
-
-        frmDangKy frmDK=new frmDangKy();
-        frmDK.show();
-        this.dispose();
-    }
+//    private void btnĐangKyActionPerformed(ActionEvent evt) {
+//
+//        frmDangKy frmDK=new frmDangKy();
+//        frmDK.show();
+//        this.dispose();
+//    }
 
     private void btnDangNhapActionPerformed(ActionEvent evt) {
     	
@@ -276,7 +281,7 @@ public class DangNhap extends javax.swing.JFrame {
         
         //Kiểm tra user
         if(KiemTra(strUsername, strPassword)){
-        	parent.enableControl(fullname);
+        	parent.enableControl(fullname, userID);
         	System.out.println("login complete");
         	this.dispose();
         } else {
@@ -295,6 +300,7 @@ public class DangNhap extends javax.swing.JFrame {
         	ResultSet rs = query.ExcuteQueryGetTable(cautruyvan);
             if (rs.next()) {
                 kq = true;
+                userID = rs.getInt("id");
                 quyen = rs.getString("quyen");
                 fullname=rs.getString("fullname");
                 username=rs.getString("username");

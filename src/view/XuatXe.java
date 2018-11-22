@@ -1,113 +1,257 @@
 package view;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import net.miginfocom.swing.MigLayout;
-
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+import controller.AcCancel;
+import model.MyQuery;
 
 public class XuatXe extends JFrame{
-	public XuatXe() {
+	
+	JLabel lblthongbao;
+	JButton btnCancel;
+	JPanel panel;
+	JButton btnOk;
+	JPanel panel_1;
+	JLabel lblID;
+	JLabel lblLoaixe;
+	JLabel lblGiovao;
+	JLabel lblBienso;
+	JLabel lblGiora;
+	JLabel lblNguoinhap;
+	JLabel lblBaido;
+	JLabel lblGia;
+	JPanel panel_2;
+	
+	int luotguiID;
+	JTable table;
+	DefaultTableModel model;
+	private TrangChu home;
+	
+	public XuatXe(JTable table, DefaultTableModel model, TrangChu home) {
+		this.home = home;
+		this.table = table;
+		this.model = model;
 		initXuatXe();
 		setVisible(true);
+		try {
+			load();
+			
+		} catch (Exception e) {
+			lblthongbao.setText("Chưa chọn xe!");
+		}
 	}
 	public void initXuatXe(){
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-		setBounds(100, 100, 550, 350);
+		setBounds(100, 100, 500, 300);
 		getContentPane().setLayout(null);
+		setResizable(false);
+		setTitle("Xuất Xe");
 		
-		JPanel panel = new JPanel();
-		panel.setBounds(10, 217, 514, 33);
+		panel = new JPanel();
+		panel.setBounds(234, 206, 250, 44);
 		getContentPane().add(panel);
 		
-		JButton btnOk = new JButton("OK");
+		btnOk = new JButton("OK");
 		panel.add(btnOk);
 		btnOk.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
+			public void actionPerformed(ActionEvent e) {
+				try {
+					MyQuery xuatxe = new MyQuery();
+					String sql = "DELETE FROM `luotgui` WHERE `luotgui`.`id` = " + luotguiID;
+					xuatxe.ExcuteQueryUpdateDB(sql);
+					lblthongbao.setText("Xuất xe thành công!");
+					home.load();
+					XuatXe.this.dispose();
+				} catch (Exception e2) {
+					lblthongbao.setText("Xuất xe không thành công!");
+				}
 				
 			}
 		});
 		
-		JButton btnCancel = new JButton("Cancel");
+		btnCancel = new JButton("Cancel");
 		panel.add(btnCancel);
+		btnCancel.addActionListener(new AcCancel(XuatXe.this));
 		
-		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(10, 11, 571, 205);
+		panel_1 = new JPanel();
+		panel_1.setBounds(10, 11, 474, 195);
 		getContentPane().add(panel_1);
 		
-		JLabel lblGia = new JLabel("Gia");
+		lblID = new JLabel("Vé Xe");
+		lblID.setForeground(Color.RED);
+		lblID.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		
-		JLabel lblID = new JLabel("Vé Xe");
+		lblLoaixe = new JLabel("Loại Xe");
 		
-		JLabel lblLoaixe = new JLabel("Loại Xe");
+		lblGiovao = new JLabel("Giờ Vào");
 		
-		JLabel lblGiovao = new JLabel("Giờ Vào");
+		lblBienso = new JLabel("Biển Số");
 		
-		JLabel lblBaixe = new JLabel("Bai Xe");
+		lblGiora = new JLabel("Giờ Ra");
 		
-		JLabel lblBienso = new JLabel("Bien So");
+		lblNguoinhap = new JLabel("Người Nhập");
 		
-		JLabel lblNguoinhap = new JLabel("Nguoi Nhap");
+		lblBaido = new JLabel("Bãi Đỗ");
 		
-		JLabel lblGiora = new JLabel("Gio Ra");
+		lblGia = new JLabel("Giá :");
+		lblGia.setForeground(Color.RED);
+		lblGia.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1.setHorizontalGroup(
-			gl_panel_1.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_1.createSequentialGroup()
-					.addGap(22)
+			gl_panel_1.createParallelGroup(Alignment.TRAILING)
+				.addGroup(Alignment.LEADING, gl_panel_1.createSequentialGroup()
+					.addGap(36)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
 						.addComponent(lblGiovao)
-						.addComponent(lblBaixe)
-						.addComponent(lblLoaixe))
-					.addPreferredGap(ComponentPlacement.RELATED, 241, Short.MAX_VALUE)
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
-						.addComponent(lblBienso, Alignment.LEADING)
-						.addComponent(lblNguoinhap, Alignment.LEADING)
-						.addComponent(lblGiora, Alignment.LEADING))
-					.addGap(217))
-				.addGroup(gl_panel_1.createSequentialGroup()
-					.addGap(257)
+						.addComponent(lblLoaixe)
+						.addComponent(lblNguoinhap))
+					.addGap(126)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblGia)
-						.addComponent(lblID))
-					.addContainerGap(287, Short.MAX_VALUE))
+						.addComponent(lblBienso)
+						.addComponent(lblGiora)
+						.addComponent(lblBaido))
+					.addContainerGap(169, Short.MAX_VALUE))
+				.addGroup(gl_panel_1.createSequentialGroup()
+					.addContainerGap(173, Short.MAX_VALUE)
+					.addComponent(lblID)
+					.addGap(234))
+				.addGroup(gl_panel_1.createSequentialGroup()
+					.addGap(191)
+					.addComponent(lblGia)
+					.addContainerGap(228, Short.MAX_VALUE))
 		);
 		gl_panel_1.setVerticalGroup(
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_1.createSequentialGroup()
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_panel_1.createSequentialGroup()
-							.addGap(95)
-							.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblGiora)
-								.addComponent(lblGiovao)))
-						.addGroup(gl_panel_1.createSequentialGroup()
-							.addContainerGap()
 							.addComponent(lblID)
-							.addGap(30)
-							.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-								.addComponent(lblLoaixe)
-								.addComponent(lblBienso))))
-					.addGap(27)
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblBaixe)
-						.addComponent(lblNguoinhap))
+							.addGap(26)
+							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panel_1.createSequentialGroup()
+									.addGap(40)
+									.addComponent(lblGiovao))
+								.addComponent(lblLoaixe))
+							.addGap(29)
+							.addComponent(lblNguoinhap))
+						.addGroup(gl_panel_1.createSequentialGroup()
+							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_panel_1.createSequentialGroup()
+									.addGap(40)
+									.addComponent(lblGiora))
+								.addComponent(lblBienso))
+							.addGap(29)
+							.addComponent(lblBaido)))
 					.addGap(18)
 					.addComponent(lblGia)
-					.addGap(23))
+					.addGap(19))
 		);
 		panel_1.setLayout(gl_panel_1);
-		// TODO Auto-generated constructor stub
+		
+		panel_2 = new JPanel();
+		panel_2.setBounds(10, 206, 223, 44);
+		getContentPane().add(panel_2);
+		
+		lblthongbao = new JLabel("");
+		lblthongbao.setForeground(Color.RED);
+		panel_2.add(lblthongbao);
+	}
+	
+	public void load() throws Exception {
+		int sr = table.getSelectedRow();
+		String sid = (String) model.getValueAt(sr, 0);
+		int id = Integer.parseInt(sid);
+		luotguiID = id;
+		String baidoID = (String) model.getValueAt(sr, 5);
+		String nguoinhapID = (String) model.getValueAt(sr, 6);
+		
+		String baido = "Bãi A";
+		switch ( baidoID ) {
+		  case "1":
+			  baido = "Bãi A";
+		   break;
+		  case "2":
+			  baido = "Bãi B";
+		   break;
+		  case "3":
+			  baido = "Bãi C";
+		   break;
+		  default:
+		}
+		String nguoinhap = "Vũ Luật";
+		switch ( nguoinhapID ) {
+		  case "1":
+			  nguoinhap = "Vũ Luật";
+		   break;
+		  case "2":
+			  nguoinhap = "Cao Hiếu";
+		   break;
+		  case "3":
+			  nguoinhap = "Sơn Tùng";
+		   break;
+		  default:
+		}
+		
+		String sove = (String) model.getValueAt(sr, 3);
+		String loaixe = (String) model.getValueAt(sr, 1);
+		String bienso = (String) model.getValueAt(sr, 2);
+		String giovao = (String) model.getValueAt(sr, 4);
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal = Calendar.getInstance();
+		String giora = dateFormat.format(cal.getTime());
+		
+		int noDay = 0;
+		//tính số ngày gửi xe
+		try {
+			Calendar c1 = Calendar.getInstance();
+			Calendar c2 = Calendar.getInstance();
+			
+			java.util.Date date = dateFormat.parse(giovao);
+			java.util.Date date1 = dateFormat.parse(giora);
+			
+			c1.setTime(date);
+			c2.setTime(date1);
+			
+			noDay = (int) ((c2.getTime().getTime() - c1.getTime().getTime()) / (24 * 3600 * 1000));
+			System.out.println(noDay);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		lblID.setText("Số Vé  : " + sove);
+		lblLoaixe.setText("Loại Xe  : " + loaixe);
+		lblBienso.setText("Biển Số  : " + bienso);
+		lblGiovao.setText("Giờ Vào  : " + giovao);
+		lblGiora.setText("Giờ Ra  : " + giora);
+		lblNguoinhap.setText("Người Nhập  : " + nguoinhap);
+		lblBaido.setText("Bãi Đỗ  : " + baido);
+		
+		int gia = 0;
+		if (loaixe.equals("Xe May")) gia = 3000 + noDay*3000;
+		if (loaixe.equals("Xe Dap")) gia = 2000 + noDay*2000;
+		if (loaixe.equals("O To")) gia = 20000 + noDay*20000;
+		System.out.println(gia);
+		
+		lblGia.setText("Giá  : " + gia);
 	}
 }
 

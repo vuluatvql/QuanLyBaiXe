@@ -45,14 +45,11 @@ public class MyQuery {
         return null;
     }
     //Thực thi INSERT, DELETE, UPDATE
-    public void ExcuteQueryUpdateDB(String cauTruyVanSQL){
+    public void ExcuteQueryUpdateDB(String cauTruyVanSQL) throws SQLException{
        
-        try {
-            java.sql.Statement stmt = conn.createStatement();
-            stmt.executeUpdate(cauTruyVanSQL);
-            System.out.println("Update thành công!");
-        } catch (SQLException ex) {
-            System.out.println(ex.toString());
-        }
+    	java.sql.Statement stmt = conn.createStatement();
+        stmt.executeUpdate(cauTruyVanSQL);
+        System.out.println("Update thành công!");
+        
     }
 }

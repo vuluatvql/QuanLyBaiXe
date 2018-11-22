@@ -2,6 +2,7 @@ package view;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -34,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 
 import javax.swing.JTable;
+import javax.swing.JScrollPane;
 
 public class TrangChu extends JFrame {
 	
@@ -51,6 +53,7 @@ public class TrangChu extends JFrame {
 	
 	private JPanel content;
 	private JTable tableDanhsach;
+	private JScrollPane scrollPane;
 	
 	private JPanel tool;
 	private JButton btnXuatXe;
@@ -58,6 +61,7 @@ public class TrangChu extends JFrame {
 	private JButton btnBaoMat;
 	
 	private DefaultTableModel table = null;
+	private int userID;
 	
 	public TrangChu() {
 		initComponents();
@@ -91,7 +95,6 @@ public class TrangChu extends JFrame {
         
         content = new JPanel();
         content.setBounds(180, 60, 600, 360);
-        content.setLayout(null);
         getContentPane().add(content);
         
         tool = new JPanel();
@@ -118,9 +121,9 @@ public class TrangChu extends JFrame {
         btnThemXe.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				ThemXe themxe = new ThemXe();
+				ThemXe themxe = new ThemXe(userID, TrangChu.this);
 			}
 		});
         
@@ -131,6 +134,14 @@ public class TrangChu extends JFrame {
         btnBaiXe.setBounds(0, 184, 180, 92);
         btnBaiXe.setEnabled(false);
         menuLeft.add(btnBaiXe);
+        btnBaiXe.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				BaiXe baixe = new BaiXe();
+			}
+		});
         
         btnDangNhap = new JButton("Đăng Nhập");
         btnDangNhap.setForeground(Color.WHITE);
@@ -154,6 +165,14 @@ public class TrangChu extends JFrame {
         btnDangXuat.setBounds(0, 368, 180, 92);
         btnDangXuat.setEnabled(false);
         menuLeft.add(btnDangXuat);
+        btnDangXuat.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				DangXuat dx = new DangXuat(TrangChu.this);
+			}
+		});
         
         
         lblDanhSachXe = new JLabel("Danh Sách Xe Trong Bãi");
@@ -174,10 +193,13 @@ public class TrangChu extends JFrame {
         lblUser.setFont(new Font("Times New Roman", Font.PLAIN, 9));
         lblUser.setBounds(63, 42, 191, 14);
         tittle.add(lblUser);
+        content.setLayout(new BorderLayout(0, 0));
+        
+        scrollPane = new JScrollPane();
+        content.add(scrollPane, BorderLayout.CENTER);
         
         tableDanhsach = new JTable();
-        tableDanhsach.setBounds(5, 5, 590, 350);
-        content.add(tableDanhsach);
+        scrollPane.setViewportView(tableDanhsach);
         
         btnXuatXe = new JButton("Xuất Xe");
         btnXuatXe.setEnabled(false);
@@ -185,18 +207,34 @@ public class TrangChu extends JFrame {
         btnXuatXe.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				XuatXe xuat = new XuatXe();
+			public void actionPerformed(ActionEvent e) {
+				XuatXe xuat = new XuatXe(tableDanhsach, table, TrangChu.this);
 			}
 		});
         
         btnSuaThongTin = new JButton("Sửa Thông Tin");
         btnSuaThongTin.setEnabled(false);
         tool.add(btnSuaThongTin);
+        btnSuaThongTin.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				SuaThongTin sua = new SuaThongTin(TrangChu.this, tableDanhsach, table);
+			}
+		});
         
         btnBaoMat = new JButton("Báo Mất");
         btnBaoMat.setEnabled(false);
         tool.add(btnBaoMat);
+        btnBaoMat.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				JOptionPane.showMessageDialog(TrangChu.this, "Vui lòng liên hệ anh Luật", "Báo Mất", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 	}
 	
 	public void load() {
@@ -204,6 +242,7 @@ public class TrangChu extends JFrame {
 		table.addColumn("ID");
 		table.addColumn("Loại Xe");
 		table.addColumn("Biển Số");
+		table.addColumn("Số Vé");
 		table.addColumn("Giờ Vào");
 		table.addColumn("Bãi Xe");
 		table.addColumn("Người Nhập");
@@ -218,18 +257,48 @@ public class TrangChu extends JFrame {
 				int id = rs.getInt("id");
 				String loaixe = rs.getString("loaixe");
 				String bienso = rs.getString("bienso");
+				String sove = String.valueOf(rs.getInt("vexe_id"));
 				String giovao = String.valueOf(rs.getDate("giovao"));
 				int baixe = rs.getInt("baixe_id");
 				int nguoinhap = rs.getInt("user_id");
 				
 				// add to table
-				String[] values = new String[6];
+				String[] values = new String[7];
 				values[0] = String.valueOf(id);
 				values[1] = loaixe;
 				values[2] = bienso;
-				values[3] = giovao;
-				values[4] = String.valueOf(baixe);
-				values[5] = String.valueOf(nguoinhap);
+				values[3] = sove;
+				values[4] = giovao;
+				switch (baixe) {
+				case 1:
+					values[5] = "Bãi A";
+					break;
+				case 2:
+					values[5] = "Bãi B";
+					break;
+				case 3:
+					values[5] = "Bãi C";
+					break;
+
+				default:
+					break;
+				}
+//				values[5] = String.valueOf(baixe);
+				switch (nguoinhap) {
+				case 1:
+					values[6] = "Vũ Luật";
+					break;
+				case 2:
+					values[6] = "Cao Hiếu";
+					break;
+				case 3:
+					values[6] = "Sơn Tùng";
+					break;
+
+				default:
+					break;
+				}
+//				values[6] = String.valueOf(nguoinhap);
 				
 				table.addRow(values);
 			}
@@ -241,7 +310,7 @@ public class TrangChu extends JFrame {
 		
 	}
 	
-	public void enableControl(String text) {
+	public void enableControl(String text, int id) {
 		
 		btnThemXe.setEnabled(true);
 		btnBaiXe.setEnabled(true);
@@ -250,8 +319,18 @@ public class TrangChu extends JFrame {
 		btnSuaThongTin.setEnabled(true);
 		btnBaoMat.setEnabled(true);
 		lblUser.setText("Admin " + text);
+		userID = id;
 	}
 	
+	public void disableControl() {
+		btnThemXe.setEnabled(false);
+		btnBaiXe.setEnabled(false);
+		btnDangXuat.setEnabled(false);
+		btnXuatXe.setEnabled(false);
+		btnSuaThongTin.setEnabled(false);
+		btnBaoMat.setEnabled(false);
+		lblUser.setText("Người dùng khách");
+	}
 	public static void main(String[] args) {
 		TrangChu home = new TrangChu();
 	}

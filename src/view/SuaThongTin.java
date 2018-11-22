@@ -1,38 +1,35 @@
 package view;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.table.DefaultTableModel;
 
 import controller.AcCancel;
 import model.MyQuery;
 
 import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.awt.GridBagConstraints;
-import javax.swing.BoxLayout;
-import net.miginfocom.swing.MigLayout;
-import java.awt.FlowLayout;
 import java.awt.Color;
 
-public class ThemXe extends JFrame {
+public class SuaThongTin extends JFrame{
 
 	int userID;
 	String BienSo;
 	int SoVe;
 	String LoaiXe;
 	int BaiXe;
-	int NguoiThem;
 
 	private JTextField txtBienSo;
 	private JTextField txtSoVe;
@@ -50,12 +47,25 @@ public class ThemXe extends JFrame {
 	private JLabel lblthongbao;
 	
 	private TrangChu home;
+	private JTable table;
+	private DefaultTableModel model;
 
-	public ThemXe(int id, TrangChu home) {
+	public SuaThongTin(TrangChu home, JTable table, DefaultTableModel model) {
 		this.home = home;
-		this.userID = id;
+		this.table = table;
+		this.model = model;
 		initThemXe();
 		setVisible(true);
+		
+		try {
+			int sr = table.getSelectedRow();
+			cbbLoaiXe.setSelectedItem(model.getValueAt(sr, 1));
+			txtBienSo.setText((String) model.getValueAt(sr, 2));
+			txtSoVe.setText((String) model.getValueAt(sr, 3));
+			cbbBaiXe.setSelectedItem(model.getValueAt(sr, 5));
+		} catch (Exception e) {
+			lblthongbao.setText("Chưa chọn xe!");
+		}
 	}
 
 	public void initThemXe() {
@@ -63,7 +73,7 @@ public class ThemXe extends JFrame {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setBounds(100, 100, 500, 300);
 		setResizable(false);
-		setTitle("Thêm Xe");
+		setTitle("Sửa Thông Tin");
 
 		JPanel panel = new JPanel();
 
@@ -78,10 +88,11 @@ public class ThemXe extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					load();
-					lblthongbao.setText("Thêm xe thành công!");
+					lblthongbao.setText("Sửa thông tin thành công!");
 					home.load();
+					SuaThongTin.this.dispose();
 				} catch (Exception e2) {
-					lblthongbao.setText("Thêm xe không thành công! Thiếu thông tin.");
+					lblthongbao.setText("Sửa thông tin không thành công!");
 				}
 
 			}
@@ -89,7 +100,7 @@ public class ThemXe extends JFrame {
 
 		btnCancel = new JButton("Cancel");
 		panel_1.add(btnCancel);
-		btnCancel.addActionListener(new AcCancel(ThemXe.this));
+		btnCancel.addActionListener(new AcCancel(SuaThongTin.this));
 
 		lblLoiXe = new JLabel("Loại Xe");
 
@@ -177,6 +188,12 @@ public class ThemXe extends JFrame {
 	}
 
 	public void load() throws SQLException {
+		int sr = table.getSelectedRow();
+		String sid = (String) model.getValueAt(sr, 0);
+		int id = Integer.parseInt(sid);
+		int luotguiID = id;
+		System.out.println("luot gui ID:  " + luotguiID);
+		
 		int i = 1;
 		if (cbbBaiXe.getSelectedItem() == "Bãi A") {
 			i = 1;
@@ -189,15 +206,12 @@ public class ThemXe extends JFrame {
 		LoaiXe = (String) cbbLoaiXe.getSelectedItem();
 		BaiXe = i;
 		SoVe = Integer.parseInt(txtSoVe.getText());
-		NguoiThem = userID;
+		System.out.println("Bien so : " + BienSo + ", Loai Xe : " + LoaiXe + ", Bai xe : " + BaiXe + ", So ve : " + SoVe);
 		
-		MyQuery themxe = new MyQuery();
-		String sql = "INSERT INTO `luotgui` (`id`, `giovao`, `loaixe`, `bienso`, `vexe_id`, `baixe_id`, `user_id`)"
-				+ " VALUES (NULL, NOW(), '" + LoaiXe + "', '" + BienSo + "', '"
-				+ SoVe + "', '" + BaiXe + "', '" + NguoiThem + "');";
-		themxe.ExcuteQueryUpdateDB(sql);
+		MyQuery suatt = new MyQuery();
 		
-		txtBienSo.setText("");
-		txtSoVe.setText("");
+		String sql = "UPDATE `luotgui` SET `loaixe` = '"+ LoaiXe +"', `bienso` = '"+ BienSo +"', `vexe_id` = '"+ SoVe +"', `baixe_id` = '"+ BaiXe +"' WHERE `luotgui`.`id` = "+ luotguiID +";";
+		suatt.ExcuteQueryUpdateDB(sql);
+		
 	}
 }
