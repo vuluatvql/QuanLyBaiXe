@@ -47,7 +47,7 @@ public class DangNhap extends javax.swing.JFrame {
 	private JLabel lblPassword;
 	private JLabel lblTitle;
 	private JLabel lblUserName;
-	private JLabel thongbao;
+	JLabel thongbao;
 	
 	private JPasswordField txtPassword;
 	private JTextField txtUserName;
@@ -126,7 +126,13 @@ public class DangNhap extends javax.swing.JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(DangNhap.this, "Vui lòng liên hệ ban quản trị", "Đăng kí", JOptionPane.INFORMATION_MESSAGE);
+				if(parent.userID == -1) {
+					JOptionPane.showMessageDialog(DangNhap.this, "Chỉ Admin mới có quyền đăng kí", "Vui lòng đăng nhập", JOptionPane.INFORMATION_MESSAGE);
+				}
+				else {
+					DangKy dk = new DangKy(DangNhap.this);
+				}
+				
 			}
 		});
 

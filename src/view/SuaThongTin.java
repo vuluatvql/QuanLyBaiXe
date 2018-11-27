@@ -89,7 +89,8 @@ public class SuaThongTin extends JFrame{
 				try {
 					load();
 					lblthongbao.setText("Sửa thông tin thành công!");
-					home.load();
+					String sql = "SELECT * FROM luotgui";
+					home.load(sql);
 					SuaThongTin.this.dispose();
 				} catch (Exception e2) {
 					lblthongbao.setText("Sửa thông tin không thành công!");
