@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -77,7 +78,8 @@ public class XuatXe extends JFrame{
 					String sql = "DELETE FROM `luotgui` WHERE `luotgui`.`id` = " + luotguiID;
 					xuatxe.ExcuteQueryUpdateDB(sql);
 					lblthongbao.setText("Xuất xe thành công!");
-					home.load();
+					String sql2 = "SELECT * FROM luotgui";
+					home.load(sql2);
 					XuatXe.this.dispose();
 				} catch (Exception e2) {
 					lblthongbao.setText("Xuất xe không thành công!");
@@ -115,35 +117,36 @@ public class XuatXe extends JFrame{
 		lblGia.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1.setHorizontalGroup(
-			gl_panel_1.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, gl_panel_1.createSequentialGroup()
-					.addGap(36)
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblGiovao)
-						.addComponent(lblLoaixe)
-						.addComponent(lblNguoinhap))
-					.addGap(126)
-					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblBienso)
-						.addComponent(lblGiora)
-						.addComponent(lblBaido))
-					.addContainerGap(169, Short.MAX_VALUE))
+			gl_panel_1.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_1.createSequentialGroup()
-					.addContainerGap(173, Short.MAX_VALUE)
-					.addComponent(lblID)
-					.addGap(234))
-				.addGroup(gl_panel_1.createSequentialGroup()
-					.addGap(191)
-					.addComponent(lblGia)
-					.addContainerGap(228, Short.MAX_VALUE))
+					.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel_1.createSequentialGroup()
+							.addGap(36)
+							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblGiovao)
+								.addComponent(lblLoaixe)
+								.addComponent(lblNguoinhap))
+							.addGap(126)
+							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblBienso)
+								.addComponent(lblGiora)
+								.addComponent(lblBaido)))
+						.addGroup(gl_panel_1.createSequentialGroup()
+							.addGap(191)
+							.addComponent(lblGia)))
+					.addContainerGap(107, Short.MAX_VALUE))
+				.addGroup(Alignment.TRAILING, gl_panel_1.createSequentialGroup()
+					.addContainerGap(130, Short.MAX_VALUE)
+					.addComponent(lblID, GroupLayout.PREFERRED_SIZE, 220, GroupLayout.PREFERRED_SIZE)
+					.addGap(124))
 		);
 		gl_panel_1.setVerticalGroup(
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_1.createSequentialGroup()
+					.addComponent(lblID)
+					.addGap(26)
 					.addGroup(gl_panel_1.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_panel_1.createSequentialGroup()
-							.addComponent(lblID)
-							.addGap(26)
 							.addGroup(gl_panel_1.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_panel_1.createSequentialGroup()
 									.addGap(40)
@@ -214,6 +217,16 @@ public class XuatXe extends JFrame{
 		String bienso = (String) model.getValueAt(sr, 2);
 		String giovao = (String) model.getValueAt(sr, 4);
 		
+		
+		//truy van lay ra loai ve.
+		MyQuery loaive = new MyQuery();
+		String loaivesql = "SELECT `loai` FROM `vexe` WHERE `id` = " + sove;
+		ResultSet rsloaive = loaive.ExcuteQueryGetTable(loaivesql);
+		String ve = "";
+		while(rsloaive.next()) {
+			ve = rsloaive.getString("loai");
+		}
+		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar cal = Calendar.getInstance();
 		String giora = dateFormat.format(cal.getTime());
@@ -237,7 +250,7 @@ public class XuatXe extends JFrame{
 			e.printStackTrace();
 		}
 		
-		lblID.setText("Số Vé  : " + sove);
+		lblID.setText("Số Vé  : " + sove + "   Vé :  " + ve);
 		lblLoaixe.setText("Loại Xe  : " + loaixe);
 		lblBienso.setText("Biển Số  : " + bienso);
 		lblGiovao.setText("Giờ Vào  : " + giovao);
@@ -246,9 +259,21 @@ public class XuatXe extends JFrame{
 		lblBaido.setText("Bãi Đỗ  : " + baido);
 		
 		int gia = 0;
-		if (loaixe.equals("Xe May")) gia = 3000 + noDay*3000;
-		if (loaixe.equals("Xe Dap")) gia = 2000 + noDay*2000;
-		if (loaixe.equals("O To")) gia = 20000 + noDay*20000;
+		if (ve.equals("Thang")) {
+			gia = 0;
+		}
+		else {
+			
+			if (loaixe.equals("Xe May")) {
+				gia = 3000 + noDay*3000;
+			}
+			if (loaixe.equals("Xe Dap")) {
+				gia = 2000 + noDay*2000;
+			}
+			if (loaixe.equals("O To")) {
+				gia = 20000 + noDay*20000;
+			}
+		}
 		System.out.println(gia);
 		
 		lblGia.setText("Giá  : " + gia);
